@@ -1,0 +1,4 @@
+/target/
+/.idea/
+/src/main/webapp/mysql.sql
+/src/main/webapp/mysql-之前的版本.sql
