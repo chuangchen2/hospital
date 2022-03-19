@@ -4,32 +4,45 @@ import bean.NumSource;
 import bean.WorkDay;
 import util.DBUtil;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NumSourceDao {
-    /*public boolean insert(NumSource numSource){
-        Object[] o=new Object[]{numSource.getWorkdayid(),
-                office.getDescription(),
-                office.getDoctornum()};
-        String sql="insert into numsource (id ,workdayid ,serialnumber ,nstime ,state) select null,id as workdayid, 1,'8:30','可预约' from workday where worktime=? and ampm=? and doctorid=?";
-        return DBUtil.executeUpdate(sql,o);
-    }
-    public static void a(){
-        Connection conn = DBUtil.createConn();
-        try {
-            Statement statement=conn.createStatement();
+    private static NumSourceDao instance;
 
-            statement.addBatch("");
-            statement.executeBatch();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    private NumSourceDao() {
+    }
+
+    public static NumSourceDao getInstance() {
+        if (instance == null) {
+            synchronized (NumSourceDao.class) {
+                if (instance == null) {
+                    instance = new NumSourceDao();
+                }
+            }
         }
-    }*//*上午8.30-12.30 4*60=240
+        return instance;
+    }
+
+    /*public boolean insert(NumSource numSource){
+            Object[] o=new Object[]{numSource.getWorkdayid(),
+                    office.getDescription(),
+                    office.getDoctornum()};
+            String sql="insert into numsource (id ,workdayid ,serialnumber ,nstime ,state) select null,id as workdayid, 1,'8:30','可预约' from workday where worktime=? and ampm=? and doctorid=?";
+            return DBUtil.executeUpdate(sql,o);
+        }
+        public static void a(){
+            Connection conn = DBUtil.createConn();
+            try {
+                Statement statement=conn.createStatement();
+
+                statement.addBatch("");
+                statement.executeBatch();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }*//*上午8.30-12.30 4*60=240
     下午1.30-5.30 4
     create table if not exists numsource (id int primary key auto_increment,
                         workdayid int comment '工作日id',
@@ -53,14 +66,24 @@ public class NumSourceDao {
     foreign key(pid) references patient(pid),
     foreign key(did) references doctor(did),
     foreign key(wid) references workday(wid));*/
-    public boolean order(String pid, String did, NumSource numSource){//病人id,号源id
+    public boolean order(String pid, String did, NumSource numSource) throws SQLException {//病人id,号源id
         String sql ="insert into recode values(null,?,?,?,?,?,?,?,now(),'成功')";
-        Object[] o=new Object[]{pid,numSource.getState(),did,
-                numSource.getSerialnumber(),
-                numSource.getVisitdate(),
-                numSource.getVisitnoon(),
-                numSource.getVisittime()};
-        return DBUtil.executeUpdate(sql, o);
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, pid);
+        preparedStatement.setString(2, numSource.getState());
+        preparedStatement.setString(3, did);
+        preparedStatement.setString(4, numSource.getSerialnumber());
+        preparedStatement.setString(5, numSource.getVisitdate());
+        preparedStatement.setString(6, numSource.getVisitnoon());
+        preparedStatement.setString(7, numSource.getVisittime());
+        int i = preparedStatement.executeUpdate();
+        DBUtil.release(connection, preparedStatement, null);
+        if (i > 0) {
+            return true;
+        } else {
+            return false;
+        }
         /*Connection conn = DBUtil.createConn();
         Statement statement=null;
         String sql="update numsource set state='已被预约' where id='"+nid+"'" ;
@@ -82,16 +105,19 @@ public class NumSourceDao {
             }
         }*/
     }
-    public List<NumSource> query(String where, Object[] o){
-        WorkDayDao workDayDao=new WorkDayDao();
+    public List<NumSource> query(String where, Object[] o) throws SQLException {
+        WorkDayDao workDayDao = WorkDayDao.getInstance();
         List<WorkDay> workDays = workDayDao.query(where, o);
         WorkDay workDay = workDays.get(0);
         int nsnum = Integer.valueOf(workDay.getNsnum());
-
         List<NumSource> list=new ArrayList<>();
-        //String where
         String sql="select id,workdayid,serialnumber,date_format(nstime,'%H:%i'),state from numsource  "+where;
-        ResultSet rs=DBUtil.executeQuery(sql,o);
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 1; i <= o.length; i++) {
+            preparedStatement.setObject(i, o[i - 1]);
+        }
+        ResultSet rs = preparedStatement.executeQuery();
         try {
             while (rs.next()){
                 list.add(new NumSource(rs.getString(1),
@@ -103,12 +129,24 @@ public class NumSourceDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
-            DBUtil.closeAll();
+            DBUtil.release(connection, preparedStatement, rs);
         }
         return list;
     }
-    public boolean update(String where, Object[] o){
+
+    public boolean update(String where, Object[] o) throws SQLException {
         String sql="update  numsource "+where ;
-        return DBUtil.executeUpdate(sql,o);
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 1; i <= o.length; i++) {
+            preparedStatement.setObject(i, o[i - 1]);
+        }
+        int i = preparedStatement.executeUpdate();
+        DBUtil.release(connection, preparedStatement, null);
+        if (i > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -15,13 +15,14 @@ import javax.servlet.http.Part;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 
 @MultipartConfig
 @WebServlet("/doctor/myInfo")
 public class MyInfo extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DoctorDao doctorDao=new DoctorDao();
+        DoctorDao doctorDao=DoctorDao.getInstance();
         Doctor doctor = (Doctor) req.getSession().getAttribute("doctor");
         String action = Util.nullToString(req.getParameter("action"));
         if("alter".equals(action)){
@@ -58,7 +59,11 @@ public class MyInfo extends HttpServlet {
                     doctor.getPicpath(),
             doctor.getDid()};
             String set="set dname=?,age=?,description=?,picpath=? where did=?";
-            doctorDao.update(set,o);
+            try {
+                doctorDao.update(set,o);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         req.getRequestDispatcher("myInfo.jsp").forward(req,resp);
     }

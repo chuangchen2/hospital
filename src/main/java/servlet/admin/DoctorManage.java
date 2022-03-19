@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/admin/doctorManage")
@@ -24,9 +25,14 @@ public class DoctorManage extends HttpServlet {
         String action = Util.nullToString(req.getParameter("action"));
         if("add".equals(action)){
             String message="增加医生失败！";
-            DoctorDao doctorDao = new DoctorDao();
+            DoctorDao doctorDao = DoctorDao.getInstance();
             System.out.println(req.getParameter("account"));
-            List<Doctor> doctors = doctorDao.query("where account=? ",new Object[]{Util.nullToString(req.getParameter("account"))});
+            List<Doctor> doctors = null;
+            try {
+                doctors = doctorDao.query("where account=? ",new Object[]{Util.nullToString(req.getParameter("account"))});
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             if(doctors.size()==0){
                 Doctor doctor=new Doctor();
                 doctor.setAccount(req.getParameter("account"));
@@ -40,8 +46,12 @@ public class DoctorManage extends HttpServlet {
                 doctor.setCareer(req.getParameter("career"));
                 doctor.setDescription(req.getParameter("description"));
                 doctor.setPicpath(req.getContextPath()+"/images/docpic/default.jpg");
-                if(doctorDao.insert(doctor)){
-                    message="添加"+req.getParameter("name")+"医生成功!";
+                try {
+                    if(doctorDao.insert(doctor)){
+                        message="添加"+req.getParameter("name")+"医生成功!";
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }else {
                 message=req.getParameter("account")+"账号已存在！";
@@ -49,12 +59,22 @@ public class DoctorManage extends HttpServlet {
             req.setAttribute("message",message);
         }
         int start = Util.nullToZero(req.getParameter("start"));
-        DoctorDao doctorDao=new DoctorDao();
+        DoctorDao doctorDao=DoctorDao.getInstance();
         String where="where office like ? and dname like ? ";
-        int total=doctorDao.getDoctorCount(where,new Object[]{Util.toLike(office),Util.toLike(name)});
+        int total= 0;
+        try {
+            total = doctorDao.getDoctorCount(where,new Object[]{Util.toLike(office),Util.toLike(name)});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         Pages pages = new Pages(start , total, 6);
         where+="limit "+((pages.getCurrentPage()-1)*6)+",6";
-        List<Doctor> doctors = doctorDao.query(where, new Object[]{Util.toLike(office),Util.toLike(name)});
+        List<Doctor> doctors = null;
+        try {
+            doctors = doctorDao.query(where, new Object[]{Util.toLike(office),Util.toLike(name)});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("doctors",doctors);
         req.setAttribute("pages",pages);
         req.setAttribute("doctor",name);

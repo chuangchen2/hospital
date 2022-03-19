@@ -9,6 +9,21 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ApplyDao {
+    private static ApplyDao instance;
+
+    private ApplyDao() {
+    }
+
+    public static ApplyDao getInstance() {
+        if (instance == null) {
+            synchronized (RecodeDao.class) {
+                if (instance == null) {
+                    instance = new ApplyDao();
+                }
+            }
+        }
+        return instance;
+    }
     /*create table if not exists apply (aid int primary key auto_increment,
                         did int comment '医生id',
                         dname char(16),
@@ -41,7 +56,7 @@ public class ApplyDao {
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setObject(i, o[i]);
+            preparedStatement.setObject(i, o[i - 1]);
         }
         ResultSet resultSet = preparedStatement.executeQuery();
         ArrayList<HashMap<String, String>> list = new ArrayList<>();
@@ -68,7 +83,7 @@ public class ApplyDao {
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setObject(i, o[i]);
+            preparedStatement.setObject(i, o[i - 1]);
         }
         int i = preparedStatement.executeUpdate();
         DBUtil.release(connection, preparedStatement, null);
@@ -83,8 +98,8 @@ public class ApplyDao {
         String sql="call agreeApply(?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setObject(1, o[1]);
-        preparedStatement.setObject(2, o[2]);
+        preparedStatement.setObject(1, o[0]);
+        preparedStatement.setObject(2, o[1]);
         preparedStatement.executeUpdate(sql);
         DBUtil.release(connection, preparedStatement, null);
     }

@@ -17,7 +17,7 @@ import java.util.HashMap;
 public class ApplyManage extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ApplyDao applyDao=new ApplyDao();
+        ApplyDao applyDao=ApplyDao.getInstance();
         String action = req.getParameter("action");
         String aid = req.getParameter("aid");
         if("agree".equals(action)){

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/integrity")
@@ -18,7 +19,12 @@ public class Integrity extends HttpServlet {
         String where ="where pid=? order by time desc";
         Patient patient = (Patient) req.getSession().getAttribute("patient");
         IntegrityDao integrityDao=new IntegrityDao();
-        List<bean.Integrity> integrities = integrityDao.query(where, new Object[]{patient.getId()});
+        List<bean.Integrity> integrities = null;
+        try {
+            integrities = integrityDao.query(where, new Object[]{patient.getId()});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("integrities",integrities);
         req.getRequestDispatcher("integrity.jsp").forward(req,resp);
     }

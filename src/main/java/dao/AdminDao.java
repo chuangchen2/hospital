@@ -49,7 +49,7 @@ public class AdminDao {
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setString(i, (String)o[i]);
+            preparedStatement.setString(i, (String)o[i - 1]);
         }
         int i = preparedStatement.executeUpdate();
         DBUtil.release(connection, preparedStatement, null);

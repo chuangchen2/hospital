@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/register")
@@ -28,20 +29,29 @@ public class Register extends HttpServlet {
             if(password!=null&&password.equals(passwordCof)){
                 String account=req.getParameter("account");
                 if(account!=null){
-                    PatientDao patientDao=new PatientDao();
-                    List<Patient> patients = patientDao.query("account", account);
+                    PatientDao patientDao=PatientDao.getInstance();
+                    List<Patient> patients = null;
+                    try {
+                        patients = patientDao.query("account", account);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     if(patients.size()==0){
                         String name = req.getParameter("name");
                         String email = req.getParameter("email");
                         Patient patient=new Patient(null,account,email,password,name,"100");
-                        if(patientDao.insert(patient)){
-                            message="注册成功，请登录！";
-                            req.getSession().setAttribute("message",message);
-                            req.getSession().removeAttribute("checkCode");
-                            resp.sendRedirect("login.jsp");
-                            return;
-                        }else {
-                            message="注册失败，请稍后再试！";
+                        try {
+                            if(patientDao.insert(patient)){
+                                message="注册成功，请登录！";
+                                req.getSession().setAttribute("message",message);
+                                req.getSession().removeAttribute("checkCode");
+                                resp.sendRedirect("login.jsp");
+                                return;
+                            }else {
+                                message="注册失败，请稍后再试！";
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }else {
                         message="该账号已存在！";

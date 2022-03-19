@@ -4,6 +4,8 @@ import bean.WorkDay;
 import util.DBUtil;
 import util.Util;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,22 +21,49 @@ public class WorkDayDao {
     state char(8) comment '状态：已满，预约，停诊',
     fee int comment '医生出诊费',
     foreign key(doctorid) references doctor(id));*/
-    public boolean insert(WorkDay workDay) {
-        Object[] o = new Object[]{
-                workDay.getDid(),
-                workDay.getWorktime(),
-                workDay.getAmpm(),
-                workDay.getNsnum(),
-                workDay.getState()
-        };
-        String sql = "insert into workday values(null,?,?,?,?,?)";
-        return DBUtil.executeUpdate(sql, o);
+    private static WorkDayDao instance;
+
+    private WorkDayDao() {
     }
 
-    public List<WorkDay> query(String where, Object[] o) {
+    public static WorkDayDao getInstance() {
+        if (instance == null) {
+            synchronized (WorkDayDao.class) {
+                if (instance == null) {
+                    instance = new WorkDayDao();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public boolean insert(WorkDay workDay) throws SQLException {
+        String sql = "insert into workday values(null,?,?,?,?,?)";
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, workDay.getDid());
+        preparedStatement.setString(2, workDay.getWorktime());
+        preparedStatement.setString(3, workDay.getAmpm());
+        preparedStatement.setString(4, workDay.getNsnum());
+        preparedStatement.setString(5, workDay.getState());
+        int i = preparedStatement.executeUpdate();
+        DBUtil.release(connection, preparedStatement, null);
+        if (i > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public List<WorkDay> query(String where, Object[] o) throws SQLException {
         List<WorkDay> workDays = new ArrayList<>();
         String sql = "select wid,did,worktime,ampm,nsnum,state from workday  " + where;
-        ResultSet rs = DBUtil.executeQuery(sql, o);
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 1; i <= o.length; i++) {
+            preparedStatement.setObject(i, o[i - 1]);
+        }
+        ResultSet rs = preparedStatement.executeQuery();
         try {
             while (rs.next()) {
                 workDays.add(new WorkDay(rs.getString(1),
@@ -47,7 +76,7 @@ public class WorkDayDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            DBUtil.closeAll();
+            DBUtil.release(connection, preparedStatement, rs);
         }
         return workDays;
     }
@@ -94,32 +123,21 @@ public class WorkDayDao {
         }
         return workDays;
     }*/
-    public List<WorkDay> queryWorkday1(String id) {
-        List<WorkDay> workDays = new ArrayList<>();
-        String sql = "select id,doctorid,date_format(worktime,'%m-%d') as worktime,ampm,ordernum,orderednum,state,fee  from workday " +
-                " where worktime>=now() and doctorid=? order by worktime asc";
-        Object[] o = new Object[]{id};
-        ResultSet rs=null;
-        try {
-                rs= DBUtil.executeQuery(sql, o);
-                while (rs.next()) {
-                    workDays.add(new WorkDay(rs.getString(1),
-                            rs.getString(2),
-                            rs.getString(3),
-                            rs.getString(4),
-                            rs.getString(5),
-                            rs.getString(6)));
-                }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.closeAll();
-        }
-        return workDays;
-    }
-   public boolean update(String set, Object[] o){
+
+   public boolean update(String set, Object[] o) throws SQLException {
         String sql="update workday "+set;
-        return DBUtil.executeUpdate(sql,o);
+       Connection connection = DBUtil.getConnection();
+       PreparedStatement preparedStatement = connection.prepareStatement(sql);
+       for (int i = 1; i <= o.length; i++) {
+           preparedStatement.setObject(i, o[i]);
+       }
+       int i = preparedStatement.executeUpdate();
+       DBUtil.release(connection, preparedStatement, null);
+       if (i > 0) {
+           return true;
+       } else {
+           return false;
+       }
    }
 
 }

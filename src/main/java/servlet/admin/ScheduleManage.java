@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/admin/scheduleManage")
@@ -21,12 +22,17 @@ public class ScheduleManage extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = Util.nullToString(req.getParameter("action"));
         String did = Util.nullToString(req.getParameter("did"));
-        DoctorDao doctorDao = new DoctorDao();
-        List<Doctor> doctors = doctorDao.query(" where did=?", new Object[]{did});
+        DoctorDao doctorDao = DoctorDao.getInstance();
+        List<Doctor> doctors = null;
+        try {
+            doctors = doctorDao.query(" where did=?", new Object[]{did});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         if (doctors.size() > 0) {
             req.setAttribute("doctor", doctors.get(0));
         }
-        WorkDayDao workDayDao = new WorkDayDao();
+        WorkDayDao workDayDao = WorkDayDao.getInstance();
         String where = "";
         //修改排班
         if ("alter".equals(action)) {
@@ -35,7 +41,11 @@ public class ScheduleManage extends HttpServlet {
             String nsnum = req.getParameter("nsnum");
 
             where = " set state=? , nsnum=? where wid=? ";
-            workDayDao.update(where, new Object[]{state, nsnum, wid});
+            try {
+                workDayDao.update(where, new Object[]{state, nsnum, wid});
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
            /* if (workDays1.size() == 0) {
                 WorkDay workDay = new WorkDay("", did, worktime, ampm, ordernum, "0", "预约");
                 if (workDayDao.insert(workDay)) {
@@ -66,7 +76,12 @@ public class ScheduleManage extends HttpServlet {
             req.setAttribute("message", message);*/
         }
         where =" where did=? order by worktime asc";
-        List<WorkDay> workDays = workDayDao.query(where,new Object[]{did});
+        List<WorkDay> workDays = null;
+        try {
+            workDays = workDayDao.query(where,new Object[]{did});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("workDays", workDays);
         req.getRequestDispatcher("scheduleManage.jsp").forward(req, resp);
     }

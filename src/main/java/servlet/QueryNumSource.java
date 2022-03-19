@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -29,8 +30,13 @@ public class QueryNumSource extends HttpServlet {
         String date = req.getParameter("date");
         if(wid!=null){
             String where="where wid=?";
-            WorkDayDao workDayDao=new WorkDayDao();
-            List<WorkDay> workDays = workDayDao.query(where, new Object[]{wid});
+            WorkDayDao workDayDao=WorkDayDao.getInstance();
+            List<WorkDay> workDays = null;
+            try {
+                workDays = workDayDao.query(where, new Object[]{wid});
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             WorkDay workDay = workDays.get(0);
 
             int nsnum = Integer.valueOf(workDay.getNsnum());
@@ -52,8 +58,13 @@ public class QueryNumSource extends HttpServlet {
 //            }
 
             where=" where wid=? and visitdate=? and visitnoon=? and state='成功' order by serialnumber asc";
-            RecodeDao recodeDao=new RecodeDao();
-            List<Recode> recodes = recodeDao.query(where, new Object[]{wid, date, ampm});
+            RecodeDao recodeDao=RecodeDao.getInstance();
+            List<Recode> recodes = null;
+            try {
+                recodes = recodeDao.query(where, new Object[]{wid, date, ampm});
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             List<NumSource> list = new ArrayList<>();
             for (int i=1,j=0;i<=nsnum;i++){
                 String time=calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE);

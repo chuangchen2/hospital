@@ -3,7 +3,7 @@
     <default-config>
         <!--mysql数据库连接的各项参数-->
         <property name="driverClass">com.mysql.cj.jdbc.Driver</property>
-        <property name="jdbcUrl">jdbc:mysql://localhost:3306/usersdb</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/usersdb?serverTimezone=GMT</property>
         <property name="user">root</property>
         <property name="password">123456</property>
         <!--配置数据库连接池的初始连接数、最小链接数、获取连接数、最大连接数、最大空闲时间-->

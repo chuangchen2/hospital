@@ -44,7 +44,7 @@ public class IntegrityDao {
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setObject(i, o[i]);
+            preparedStatement.setObject(i, o[i - 1]);
         }
         ResultSet rs = preparedStatement.executeQuery();
         try {

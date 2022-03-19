@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/searchOffice")
@@ -19,11 +20,21 @@ public class OfficeSearch extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String office= Util.nullToString(req.getParameter("office"));
         int start=Util.nullToZero(req.getParameter("start"));
-        OfficeDao officeDao=new OfficeDao();
+        OfficeDao officeDao=OfficeDao.getInstance();
 
-        Pages p = new Pages(start , officeDao.getOfficeCount("officename", office),10);
+        Pages p = null;
+        try {
+            p = new Pages(start , officeDao.getOfficeCount("officename", office),10);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         String limit="limit "+((p.getCurrentPage()-1)*10)+",10";
-        List<Office> offices = officeDao.query("officename", office,limit);
+        List<Office> offices = null;
+        try {
+            offices = officeDao.query("officename", office,limit);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("offices",offices);
         req.setAttribute("office",office);
         req.setAttribute("pages",p);

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/searchDoctor")
@@ -23,17 +24,32 @@ public class DoctorSearch extends HttpServlet {
         String office = Util.nullToString(req.getParameter("office"));
         String name = Util.nullToString(req.getParameter("doctor"));
         int start = Util.nullToZero(req.getParameter("start"));
-        DoctorDao doctorDao=new DoctorDao();
+        DoctorDao doctorDao=DoctorDao.getInstance();
         String where="where office like ? and dname like ? ";
-        int total=doctorDao.getDoctorCount(where,new Object[]{Util.toLike(office),Util.toLike(name)});
+        int total= 0;
+        try {
+            total = doctorDao.getDoctorCount(where,new Object[]{Util.toLike(office),Util.toLike(name)});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         Pages pages = new Pages(start , total, 6);
         where+=" limit "+((pages.getCurrentPage()-1)*6)+",6";
-        List<Doctor> doctors = doctorDao.query(where, new Object[]{Util.toLike(office),Util.toLike(name)});
+        List<Doctor> doctors = null;
+        try {
+            doctors = doctorDao.query(where, new Object[]{Util.toLike(office),Util.toLike(name)});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("doctors",doctors);
         req.setAttribute("pages",pages);
         req.setAttribute("doctor",name);
-        OfficeDao officeDao=new OfficeDao();
-        List<Office> offices = officeDao.query("officename", office, "");
+        OfficeDao officeDao=OfficeDao.getInstance();
+        List<Office> offices = null;
+        try {
+            offices = officeDao.query("officename", office, "");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("office",offices.get(0));
         String order = req.getParameter("order");
         if("doctor".equals(order)){

@@ -3,52 +3,82 @@ package dao;
 import bean.Recode;
 import util.DBUtil;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class RecodeDao {
-    public HashMap<String, String> confirm(String id){
-        HashMap<String, String> hashMap = new HashMap<>();
-        String sql="call myproc(?)";
-        ResultSet rs = DBUtil.executeQuery(sql, new Object[]{id});
-        try { //id | serialnumber | nstime | state  | ampm | worktime       | fee  | name   | phonenum | office | room
-            if(rs.next()){
-                hashMap.put("id",rs.getString("id"));
-                hashMap.put("did",rs.getString("did"));
-                hashMap.put("serialnumber",rs.getString("serialnumber"));
-                hashMap.put("nstime",rs.getString("nstime"));
-                hashMap.put("state",rs.getString("state"));
-                hashMap.put("ampm",rs.getString("ampm"));
-                hashMap.put("worktime",rs.getString("worktime"));
-                hashMap.put("fee",rs.getString("fee"));
-                hashMap.put("name",rs.getString("name"));
-                hashMap.put("phonenum",rs.getString("phonenum"));
-                hashMap.put("office",rs.getString("office"));
-                hashMap.put("room",rs.getString("room"));
+    private static RecodeDao instance;
+
+    private RecodeDao() {
+    }
+
+    public static RecodeDao getInstance() {
+        if (instance == null) {
+            synchronized (RecodeDao.class) {
+                if (instance == null) {
+                    instance = new RecodeDao();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public List<HashMap<String, String>> orderList(String patientid) throws SQLException {
+        String sql="select recode.rid,recode.pid,recode.wid,recode.did,recode.serialnumber," +
+                "recode.visitdate,recode.visitnoon,recode.visittime,recode.ordertime,recode.state," +
+                "doctor.dname,doctor.office,doctor.room,doctor.picpath,doctor.fee" +
+                " from recode,doctor" +
+                " where recode.pid=?  and doctor.did=recode.did" +
+                " order by recode.ordertime desc;";
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, patientid);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ArrayList<HashMap<String, String>> list = new ArrayList<>();
+        try {
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            while (resultSet.next()){
+                HashMap<String, String> hashMap = new HashMap<>();
+                for(int i=1; i<= columnCount; i++){
+                    hashMap.put(rsmd.getColumnLabel(i), resultSet.getString(i));
+                }
+                list.add(hashMap);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
-            DBUtil.closeAll();
+            DBUtil.release(connection, preparedStatement, resultSet);
         }
-        return hashMap;
+        return list;
     }
-    public List<HashMap<String, String>> orderList(String patientid){
-        List<HashMap<String, String>> list=new ArrayList<>();
-        String sql="call orderList(?)";
-        return   DBUtil.getHashmap(sql, new Object[]{patientid});
-    }
-    public boolean update(String set, Object[] o){
+
+    public boolean update(String set, Object[] o) throws SQLException {
         String sql="update recode "+set;
-        return DBUtil.executeUpdate(sql,o);
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 1; i <= o.length; i++) {
+            preparedStatement.setObject(i, o[i - 1]);
+        }
+        int i = preparedStatement.executeUpdate();
+        if (i > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    public List<Recode> query (String where, Object[] o) {
+
+    public List<Recode> query (String where, Object[] o) throws SQLException {
         String sql ="select * from recode "+where;
-        ResultSet rs = DBUtil.executeQuery(sql, o);
-        List<Recode> list=new ArrayList<>();
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 1; i <= o.length; i++){
+            preparedStatement.setObject(i, o[i - 1]);
+        }
+        ResultSet rs = preparedStatement.executeQuery();
+        List<Recode> list = new ArrayList<>();
         try {
             while (rs.next()){
                 list.add(new Recode(rs.getString(1),
@@ -66,7 +96,7 @@ public class RecodeDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
-            DBUtil.closeAll();
+            DBUtil.release(connection, preparedStatement, rs);
         }
         return list;
     }

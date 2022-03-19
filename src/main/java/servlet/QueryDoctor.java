@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/querydoctor")
@@ -21,8 +22,13 @@ public class QueryDoctor extends HttpServlet {
         String column=req.getParameter("column");
         String where=req.getParameter("where");
         String pages=req.getParameter("pages");
-        DoctorDao doctorDao=new DoctorDao();
-        List<Doctor> doctors = doctorDao.query("where "+column+" like ?", new Object[]{"%"+where+"%"});
+        DoctorDao doctorDao=DoctorDao.getInstance();
+        List<Doctor> doctors = null;
+        try {
+            doctors = doctorDao.query("where "+column+" like ?", new Object[]{"%"+where+"%"});
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         JSONArray array=new JSONArray();
         for(Doctor o:doctors){

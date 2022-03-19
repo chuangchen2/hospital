@@ -67,7 +67,7 @@ public class DoctorDao {
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setObject(i, o[i]);
+            preparedStatement.setObject(i, o[i - 1]);
         }
         ResultSet resultSet = preparedStatement.executeQuery();
         try {
@@ -98,10 +98,13 @@ public class DoctorDao {
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setObject(i, o[i]);
+            preparedStatement.setObject(i, o[i - 1]);
         }
         ResultSet resultSet = preparedStatement.executeQuery();
-        String string = resultSet.getString(1);
+        String string = "";
+        if (resultSet.next()) {
+            string = resultSet.getString(1);
+        }
         DBUtil.release(connection, preparedStatement, resultSet);
         return Integer.parseInt(string);
     }

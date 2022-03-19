@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 @WebServlet("/admin/office")
 public class OfficeManage extends HttpServlet {
@@ -20,19 +21,27 @@ public class OfficeManage extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = Util.nullToString(req.getParameter("action"));
         String message="";
-        OfficeDao officeDao=new OfficeDao();
-        List<Office> offices;
+        OfficeDao officeDao=OfficeDao.getInstance();
+        List<Office> offices = null;
         switch (action){
             case "add":
                 String officename = req.getParameter("officename");
                 String description = req.getParameter("description");
-                offices= officeDao.query("officename", officename,"");
+                try {
+                    offices= officeDao.query("officename", officename,"");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 if(offices.size()==0){
                     Office office = new Office(officename, description, 0);
-                    if(officeDao.insert(office)){
-                        message=officename+"添加成功！";
-                    }else {
-                        message=officename+"添加失败！";
+                    try {
+                        if(officeDao.insert(office)){
+                            message=officename+"添加成功！";
+                        }else {
+                            message=officename+"添加失败！";
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
                 }else {
                     message=officename+"已存在！";
@@ -41,7 +50,11 @@ public class OfficeManage extends HttpServlet {
                 //req.getRequestDispatcher("admin/office.jsp").forward(req,resp);
                 break;
             case "query":
-                offices = officeDao.query("officename", "","");
+                try {
+                    offices = officeDao.query("officename", "","");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 JSONArray array=new JSONArray();
                 for(Office office:offices){
                     JSONObject jsonObject=new JSONObject();
@@ -57,9 +70,18 @@ public class OfficeManage extends HttpServlet {
 
         String office= Util.nullToString(req.getParameter("office"));
         int start=Util.nullToZero(req.getParameter("start"));
-        Pages p = new Pages(start , officeDao.getOfficeCount("officename", office),10);
+        Pages p = null;
+        try {
+            p = new Pages(start , officeDao.getOfficeCount("officename", office),10);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         String limit="limit "+((p.getCurrentPage()-1)*10)+",10";
-        offices = officeDao.query("officename", office,limit);
+        try {
+            offices = officeDao.query("officename", office,limit);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("offices",offices);
         req.setAttribute("office",office);
         req.setAttribute("pages",p);

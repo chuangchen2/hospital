@@ -30,7 +30,7 @@ public class PatientDao {
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setObject(i, o[i]);
+            preparedStatement.setObject(i, o[i - 1]);
         }
         int i = preparedStatement.executeUpdate();
         DBUtil.release(connection, preparedStatement, null);
@@ -59,7 +59,7 @@ public class PatientDao {
     }
 
     public List<Patient> query(String clounm, String where) throws SQLException {
-        List<Patient> lists=new ArrayList<>();
+        List<Patient> lists = new ArrayList<>();
         String sql="select * from patient where "+clounm+"=?";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/modifyPwd")
 public class ModifyPwd extends HttpServlet {
@@ -29,12 +30,16 @@ public class ModifyPwd extends HttpServlet {
                 Doctor doctor = (Doctor) req.getSession().getAttribute("doctor");
                 if(doctor.getPassword().equals(jmm)){
                     if(xmm.equals(qdmm)){
-                        DoctorDao doctorDao=new DoctorDao();
+                        DoctorDao doctorDao=DoctorDao.getInstance();
                         String set ="set password=? where did=?";
-                        if(doctorDao.update(set,new Object[]{xmm,doctor.getDid()})){
-                            message="修改成功";
-                        }else {
-                            message="修改失败";
+                        try {
+                            if(doctorDao.update(set,new Object[]{xmm,doctor.getDid()})){
+                                message="修改成功";
+                            }else {
+                                message="修改失败";
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }else {
                         message="两次密码不一样";
@@ -49,12 +54,16 @@ public class ModifyPwd extends HttpServlet {
                 Patient patient= (Patient) req.getSession().getAttribute("patient");
                 if(patient.getPassword().equals(jmm)){
                     if(xmm.equals(qdmm)){
-                        PatientDao patientDao=new PatientDao();
+                        PatientDao patientDao=PatientDao.getInstance();
                         String set ="set password=? where pid=?";
-                        if(patientDao.update(set,new Object[]{xmm,patient.getId()})){
-                            message="修改成功";
-                        }else {
-                            message="修改失败";
+                        try {
+                            if(patientDao.update(set,new Object[]{xmm,patient.getId()})){
+                                message="修改成功";
+                            }else {
+                                message="修改失败";
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }else {
                         message="两次密码不一样";
@@ -69,12 +78,16 @@ public class ModifyPwd extends HttpServlet {
                 Admin admin= (Admin) req.getSession().getAttribute("admin");
                 if(admin.getPassword().equals(jmm)){
                     if(xmm.equals(qdmm)){
-                        AdminDao adminDao=new AdminDao() ;
+                        AdminDao adminDao=AdminDao.getInstance();
                         String set ="set password=? where account=?";
-                        if(adminDao.updateAdmin(set,new Object[]{xmm,admin.getAccount()})){
-                            message="修改成功";
-                        }else {
-                            message="修改失败";
+                        try {
+                            if(adminDao.updateAdmin(set,new Object[]{xmm,admin.getAccount()})){
+                                message="修改成功";
+                            }else {
+                                message="修改失败";
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
                     }else {
                         message="两次密码不一样";
