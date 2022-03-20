@@ -16,9 +16,9 @@ import java.util.List;
 public class PatientManage extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String sql ="select * from patient";
+        String sql = "select * from patient";
         List<HashMap<String, String>> hashmap = DBUtil.getHashmap(sql);
-        req.setAttribute("hashmap",hashmap);
-        req.getRequestDispatcher("patientManage.jsp").forward(req,resp);
+        req.setAttribute("hashmap", hashmap);
+        req.getRequestDispatcher("patientManage.jsp").forward(req, resp);
     }
 }

@@ -21,34 +21,34 @@ public class RoomManage extends HttpServlet {
         String action = req.getParameter("action");
         String officename = req.getParameter("officename");
         String roomname = req.getParameter("roomname");
-        String message="";
-        RoomDao roomDao=RoomDao.getInstance();
+        String message = "";
+        RoomDao roomDao = RoomDao.getInstance();
         List<Room> rooms = null;
         System.out.println(action);
         System.out.println(officename);
-        switch (action){
+        switch (action) {
             case "add":
                 try {
-                    rooms= roomDao.query("roomname", roomname);
+                    rooms = roomDao.query("roomname", roomname);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                if(rooms.size()==0){
-                    Room office = new Room("",officename, roomname, 0);
+                if (rooms.size() == 0) {
+                    Room office = new Room("", officename, roomname, 0);
                     try {
-                        if(roomDao.insert(office)){
-                            message=roomname+"添加成功！";
-                        }else {
-                            message=roomname+"添加失败！";
+                        if (roomDao.insert(office)) {
+                            message = roomname + "添加成功！";
+                        } else {
+                            message = roomname + "添加失败！";
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                }else {
-                    message=roomname+"已存在！";
+                } else {
+                    message = roomname + "已存在！";
                 }
-                req.setAttribute("message",message);
-                req.getRequestDispatcher("admin/room.jsp").forward(req,resp);
+                req.setAttribute("message", message);
+                req.getRequestDispatcher("admin/room.jsp").forward(req, resp);
                 break;
             case "query":
                 try {
@@ -56,13 +56,13 @@ public class RoomManage extends HttpServlet {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                JSONArray array=new JSONArray();
-                for(Room room:rooms){
-                    JSONObject jsonObject=new JSONObject();
-                    jsonObject.put("id",room.getId());
-                    jsonObject.put("officename",room.getOfficename());
-                    jsonObject.put("roomname",room.getRoomname());
-                    jsonObject.put("doctornum",room.getDoctornum());
+                JSONArray array = new JSONArray();
+                for (Room room : rooms) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id", room.getId());
+                    jsonObject.put("officename", room.getOfficename());
+                    jsonObject.put("roomname", room.getRoomname());
+                    jsonObject.put("doctornum", room.getDoctornum());
                     array.put(jsonObject);
                 }
                 resp.setContentType("application/json; charset=utf-8");

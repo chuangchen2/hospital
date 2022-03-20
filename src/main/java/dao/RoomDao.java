@@ -26,16 +26,17 @@ public class RoomDao {
         }
         return instance;
     }
+
     /*private String id;
     private String officename;
     private String roomname;
     private int doctornum;*/
     public boolean insert(Room room) throws SQLException {
-        Object[] o=new Object[]{
+        Object[] o = new Object[]{
                 room.getOfficename(),
                 room.getRoomname(),
                 room.getDoctornum()};
-        String sql="insert into room values(null,?,?,?)";
+        String sql = "insert into room values(null,?,?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, room.getOfficename());
@@ -51,14 +52,14 @@ public class RoomDao {
     }
 
     public List<Room> query(String clounm, String where) throws SQLException {
-        List<Room> offices=new ArrayList<>();
-        String sql="select * from room where "+clounm+" like ? order by doctornum desc";
+        List<Room> offices = new ArrayList<>();
+        String sql = "select * from room where " + clounm + " like ? order by doctornum desc";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, "%" + where + "%");
         ResultSet rs = preparedStatement.executeQuery();
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 offices.add(new Room(rs.getString(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -66,14 +67,14 @@ public class RoomDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, rs);
         }
         return offices;
     }
 
     public boolean delete(String roomname) throws SQLException {
-        String sql =" delete from room where roomname=?";
+        String sql = " delete from room where roomname=?";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, roomname);

@@ -23,18 +23,18 @@ public class DoctorManage extends HttpServlet {
         String office = Util.nullToString(req.getParameter("office"));
         String name = Util.nullToString(req.getParameter("doctor"));
         String action = Util.nullToString(req.getParameter("action"));
-        if("add".equals(action)){
-            String message="增加医生失败！";
+        if ("add".equals(action)) {
+            String message = "增加医生失败！";
             DoctorDao doctorDao = DoctorDao.getInstance();
             System.out.println(req.getParameter("account"));
             List<Doctor> doctors = null;
             try {
-                doctors = doctorDao.query("where account=? ",new Object[]{Util.nullToString(req.getParameter("account"))});
+                doctors = doctorDao.query("where account=? ", new Object[]{Util.nullToString(req.getParameter("account"))});
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            if(doctors.size()==0){
-                Doctor doctor=new Doctor();
+            if (doctors.size() == 0) {
+                Doctor doctor = new Doctor();
                 doctor.setAccount(req.getParameter("account"));
                 doctor.setPassword(req.getParameter("password"));
                 doctor.setDname(req.getParameter("name"));
@@ -45,42 +45,42 @@ public class DoctorManage extends HttpServlet {
                 doctor.setRoom(req.getParameter("room"));
                 doctor.setCareer(req.getParameter("career"));
                 doctor.setDescription(req.getParameter("description"));
-                doctor.setPicpath(req.getContextPath()+"/images/docpic/default.jpg");
+                doctor.setPicpath(req.getContextPath() + "/images/docpic/default.jpg");
                 try {
-                    if(doctorDao.insert(doctor)){
-                        message="添加"+req.getParameter("name")+"医生成功!";
+                    if (doctorDao.insert(doctor)) {
+                        message = "添加" + req.getParameter("name") + "医生成功!";
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }else {
-                message=req.getParameter("account")+"账号已存在！";
+            } else {
+                message = req.getParameter("account") + "账号已存在！";
             }
-            req.setAttribute("message",message);
+            req.setAttribute("message", message);
         }
         int start = Util.nullToZero(req.getParameter("start"));
-        DoctorDao doctorDao=DoctorDao.getInstance();
-        String where="where office like ? and dname like ? ";
-        int total= 0;
+        DoctorDao doctorDao = DoctorDao.getInstance();
+        String where = "where office like ? and dname like ? ";
+        int total = 0;
         try {
-            total = doctorDao.getDoctorCount(where,new Object[]{Util.toLike(office),Util.toLike(name)});
+            total = doctorDao.getDoctorCount(where, new Object[]{Util.toLike(office), Util.toLike(name)});
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        Pages pages = new Pages(start , total, 6);
-        where+="limit "+((pages.getCurrentPage()-1)*6)+",6";
+        Pages pages = new Pages(start, total, 6);
+        where += "limit " + ((pages.getCurrentPage() - 1) * 6) + ",6";
         List<Doctor> doctors = null;
         try {
-            doctors = doctorDao.query(where, new Object[]{Util.toLike(office),Util.toLike(name)});
+            doctors = doctorDao.query(where, new Object[]{Util.toLike(office), Util.toLike(name)});
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        req.setAttribute("doctors",doctors);
-        req.setAttribute("pages",pages);
-        req.setAttribute("doctor",name);
+        req.setAttribute("doctors", doctors);
+        req.setAttribute("pages", pages);
+        req.setAttribute("doctor", name);
         //OfficeDao officeDao=new OfficeDao();
         //List<Office> offices = officeDao.query("officename", office, "");
-        req.setAttribute("office",office);
-        req.getRequestDispatcher("doctorManage.jsp").forward(req,resp);
+        req.setAttribute("office", office);
+        req.getRequestDispatcher("doctorManage.jsp").forward(req, resp);
     }
 }

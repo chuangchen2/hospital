@@ -21,7 +21,7 @@ public class IntegrityDao {
                         foreign key(pid) references patient(pid));;*/
 
     public boolean insert(Integrity integrity) throws SQLException {
-        String sql="insert into integrity values(null,?,?,?,now(),?,?)";
+        String sql = "insert into integrity values(null,?,?,?,now(),?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, integrity.getPid());
@@ -38,9 +38,9 @@ public class IntegrityDao {
         }
     }
 
-    public List<Integrity> query(String where,Object[] o) throws SQLException {
-        List<Integrity> list=new ArrayList<>();
-        String sql="select * from integrity "+where;
+    public List<Integrity> query(String where, Object[] o) throws SQLException {
+        List<Integrity> list = new ArrayList<>();
+        String sql = "select * from integrity " + where;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
@@ -48,7 +48,7 @@ public class IntegrityDao {
         }
         ResultSet rs = preparedStatement.executeQuery();
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 list.add(new Integrity(rs.getString(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -59,7 +59,7 @@ public class IntegrityDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, rs);
         }
         return list;

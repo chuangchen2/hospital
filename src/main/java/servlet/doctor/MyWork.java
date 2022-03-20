@@ -19,14 +19,14 @@ import java.util.List;
 public class MyWork extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        WorkDayDao workDayDao=WorkDayDao.getInstance();
+        WorkDayDao workDayDao = WorkDayDao.getInstance();
         String action = Util.nullToString(req.getParameter("action"));
-        switch (action){
+        switch (action) {
             case "offWork":
                 String wid = req.getParameter("wid");
                 String set = "set state ='停诊' where id=?";
                 try {
-                    workDayDao.update(set,new Object[]{wid});
+                    workDayDao.update(set, new Object[]{wid});
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -35,14 +35,14 @@ public class MyWork extends HttpServlet {
         Doctor doctor = (Doctor) req.getSession().getAttribute("doctor");
 
         //List<WorkDay> workDays= workDayDao.queryWorkday1(doctor.getDid());
-        String where =" where did=? order by worktime asc";
+        String where = " where did=? order by worktime asc";
         List<WorkDay> workDays = null;
         try {
-            workDays = workDayDao.query(where,new Object[]{doctor.getDid()});
+            workDays = workDayDao.query(where, new Object[]{doctor.getDid()});
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        req.setAttribute("workDays",workDays);
-        req.getRequestDispatcher("myWork.jsp").forward(req,resp);
+        req.setAttribute("workDays", workDays);
+        req.getRequestDispatcher("myWork.jsp").forward(req, resp);
     }
 }

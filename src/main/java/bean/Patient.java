@@ -1,6 +1,6 @@
 package bean;
 
-public class Patient{
+public class Patient {
     /*create table if not exists patient (id int primary key auto_increment,
                                         account char(16),
     email char(32) ,

@@ -20,19 +20,19 @@ public class ApplyWork extends HttpServlet {
         String request = req.getParameter("request");
         String reason = req.getParameter("reason");
         Doctor doctor = (Doctor) req.getSession().getAttribute("doctor");
-        Apply apply = new Apply("", doctor.getDid(), doctor.getDname(), wid, reason, "","", request);
-        ApplyDao applyDao=ApplyDao.getInstance();
-        String message="";
+        Apply apply = new Apply("", doctor.getDid(), doctor.getDname(), wid, reason, "", "", request);
+        ApplyDao applyDao = ApplyDao.getInstance();
+        String message = "";
         try {
-            if(applyDao.insert(apply)){
-                message="提交申请成功";
-            }else {
-                message="提交申请失败，请稍后再试";
+            if (applyDao.insert(apply)) {
+                message = "提交申请成功";
+            } else {
+                message = "提交申请失败，请稍后再试";
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        req.setAttribute("message",message);
-        req.getRequestDispatcher("myApply").forward(req,resp);
+        req.setAttribute("message", message);
+        req.getRequestDispatcher("myApply").forward(req, resp);
     }
 }

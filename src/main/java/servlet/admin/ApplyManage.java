@@ -17,20 +17,20 @@ import java.util.HashMap;
 public class ApplyManage extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ApplyDao applyDao=ApplyDao.getInstance();
+        ApplyDao applyDao = ApplyDao.getInstance();
         String action = req.getParameter("action");
         String aid = req.getParameter("aid");
-        if("agree".equals(action)){
-            int nsnum = Util.nullToZero(req.getParameter("nsnum")) ;
+        if ("agree".equals(action)) {
+            int nsnum = Util.nullToZero(req.getParameter("nsnum"));
             try {
-                applyDao.agree(new Object[]{nsnum,Integer.valueOf(aid)});
+                applyDao.agree(new Object[]{nsnum, Integer.valueOf(aid)});
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }else if("reject".equals(action)){
-            String set=" set state='拒绝' where aid=?";
+        } else if ("reject".equals(action)) {
+            String set = " set state='拒绝' where aid=?";
             try {
-                applyDao.update(set,new Object[]{aid});
+                applyDao.update(set, new Object[]{aid});
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -41,7 +41,7 @@ public class ApplyManage extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        req.setAttribute("maps",maps);
-        req.getRequestDispatcher("applyManage.jsp").forward(req,resp);
+        req.setAttribute("maps", maps);
+        req.getRequestDispatcher("applyManage.jsp").forward(req, resp);
     }
 }

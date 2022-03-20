@@ -7,11 +7,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
-public  class MyMail {
-    private static final String from="1104764154@qq.com";
+public class MyMail {
+    private static final String from = "1104764154@qq.com";
     private static final String host = "smtp.qq.com";
     private static final String password = "xemdikbeholzjifc";
-    public static boolean sendMail(String to, String content){
+
+    public static boolean sendMail(String to, String content) {
         Properties prop = new Properties();
         prop.setProperty("mail.host", host);
         prop.setProperty("mail.smtp.auth", "true");
@@ -25,7 +26,7 @@ public  class MyMail {
             Session session = Session.getInstance(prop);
             Transport ts = session.getTransport();
             // 连接邮件服务器：邮箱类型，帐号，授权码代替密码（更安全）
-            ts.connect(host,from, password);//后面的字符是授权码，用qq密码反正我是失败了（用自己的，别用我的，这个号是我瞎编的，为了。。。。）
+            ts.connect(host, from, password);//后面的字符是授权码，用qq密码反正我是失败了（用自己的，别用我的，这个号是我瞎编的，为了。。。。）
             // 创建邮件对象
             MimeMessage message = new MimeMessage(session);
             // 指明邮件的发件人

@@ -29,11 +29,11 @@ public class PatientList extends HttpServlet {
         IntegrityDao integrityDao = new IntegrityDao();
         Integrity integrity;
         String set;
-        switch (action){
+        switch (action) {
             case "finish":
                 set = "set state ='完成' where rid=?";
                 try {
-                    recodeDao.update(set,new Object[]{rid});
+                    recodeDao.update(set, new Object[]{rid});
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -47,7 +47,7 @@ public class PatientList extends HttpServlet {
             case "sy":
                 set = "set state ='爽约' where rid=?";
                 try {
-                    recodeDao.update(set,new Object[]{rid});
+                    recodeDao.update(set, new Object[]{rid});
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -67,7 +67,7 @@ public class PatientList extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        req.setAttribute("list",list);
-        req.getRequestDispatcher("patientList.jsp").forward(req,resp);
+        req.setAttribute("list", list);
+        req.getRequestDispatcher("patientList.jsp").forward(req, resp);
     }
 }

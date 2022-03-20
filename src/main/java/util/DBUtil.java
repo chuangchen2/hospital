@@ -68,7 +68,7 @@ public class DBUtil {
         return list;
     }
 
-    public static List<HashMap<String, String>> getHashmap(String sql){
+    public static List<HashMap<String, String>> getHashmap(String sql) {
         Connection connection = getConnection();
         Statement statement = null;
         ArrayList<HashMap<String, String>> list = new ArrayList<>();
@@ -77,9 +77,9 @@ public class DBUtil {
             ResultSet resultSet = statement.executeQuery(sql);
             ResultSetMetaData rsmd = resultSet.getMetaData();
             int columnCount = rsmd.getColumnCount();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 HashMap<String, String> hashMap = new HashMap<>();
-                for(int i=1; i<= columnCount; i++){
+                for (int i = 1; i <= columnCount; i++) {
                     hashMap.put(rsmd.getColumnLabel(i), resultSet.getString(i));
                 }
                 list.add(hashMap);

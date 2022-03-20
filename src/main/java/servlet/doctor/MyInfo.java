@@ -22,10 +22,10 @@ import java.sql.SQLException;
 public class MyInfo extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DoctorDao doctorDao=DoctorDao.getInstance();
+        DoctorDao doctorDao = DoctorDao.getInstance();
         Doctor doctor = (Doctor) req.getSession().getAttribute("doctor");
         String action = Util.nullToString(req.getParameter("action"));
-        if("alter".equals(action)){
+        if ("alter".equals(action)) {
             String name = req.getParameter("name");
             String age = req.getParameter("age");
             String description = req.getParameter("description");
@@ -34,37 +34,37 @@ public class MyInfo extends HttpServlet {
             doctor.setDescription(description);
             Part part;
             part = req.getPart("pic");
-            if(part.getSize()>0&&part.getSize()<1024*1024){
+            if (part.getSize() > 0 && part.getSize() < 1024 * 1024) {
                 System.out.println(part.getSubmittedFileName());
                 String fileName = part.getSubmittedFileName();
-                String jpg=fileName.substring(fileName.lastIndexOf("."));
+                String jpg = fileName.substring(fileName.lastIndexOf("."));
 //                System.out.println(jpg);
-                InputStream is=part.getInputStream();
+                InputStream is = part.getInputStream();
                 String realPath = this.getServletContext().getRealPath("images/docpic");
 //                System.out.println(realPath);
-                FileOutputStream fos = new FileOutputStream(realPath+"/"+doctor.getDid()+jpg);
-                byte[] bytes=new byte[1024];
-                int i=0;
-                while ((i=is.read(bytes))!=-1){
-                    fos.write(bytes,0,i);
+                FileOutputStream fos = new FileOutputStream(realPath + "/" + doctor.getDid() + jpg);
+                byte[] bytes = new byte[1024];
+                int i = 0;
+                while ((i = is.read(bytes)) != -1) {
+                    fos.write(bytes, 0, i);
                 }
                 fos.close();
                 is.close();
-                doctor.setPicpath("/hospital/images/docpic/"+doctor.getDid()+jpg);
+                doctor.setPicpath("/hospital/images/docpic/" + doctor.getDid() + jpg);
             }
-            Object[] o=new Object[]{
+            Object[] o = new Object[]{
                     doctor.getDname(),
                     doctor.getAge(),
                     doctor.getDescription(),
                     doctor.getPicpath(),
-            doctor.getDid()};
-            String set="set dname=?,age=?,description=?,picpath=? where did=?";
+                    doctor.getDid()};
+            String set = "set dname=?,age=?,description=?,picpath=? where did=?";
             try {
-                doctorDao.update(set,o);
+                doctorDao.update(set, o);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        req.getRequestDispatcher("myInfo.jsp").forward(req,resp);
+        req.getRequestDispatcher("myInfo.jsp").forward(req, resp);
     }
 }

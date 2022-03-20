@@ -67,7 +67,7 @@ public class NumSourceDao {
     foreign key(did) references doctor(did),
     foreign key(wid) references workday(wid));*/
     public boolean order(String pid, String did, NumSource numSource) throws SQLException {//病人id,号源id
-        String sql ="insert into recode values(null,?,?,?,?,?,?,?,now(),'成功')";
+        String sql = "insert into recode values(null,?,?,?,?,?,?,?,now(),'成功')";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, pid);
@@ -105,13 +105,14 @@ public class NumSourceDao {
             }
         }*/
     }
+
     public List<NumSource> query(String where, Object[] o) throws SQLException {
         WorkDayDao workDayDao = WorkDayDao.getInstance();
         List<WorkDay> workDays = workDayDao.query(where, o);
         WorkDay workDay = workDays.get(0);
         int nsnum = Integer.valueOf(workDay.getNsnum());
-        List<NumSource> list=new ArrayList<>();
-        String sql="select id,workdayid,serialnumber,date_format(nstime,'%H:%i'),state from numsource  "+where;
+        List<NumSource> list = new ArrayList<>();
+        String sql = "select id,workdayid,serialnumber,date_format(nstime,'%H:%i'),state from numsource  " + where;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
@@ -119,7 +120,7 @@ public class NumSourceDao {
         }
         ResultSet rs = preparedStatement.executeQuery();
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 list.add(new NumSource(rs.getString(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -128,14 +129,14 @@ public class NumSourceDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, rs);
         }
         return list;
     }
 
     public boolean update(String where, Object[] o) throws SQLException {
-        String sql="update  numsource "+where ;
+        String sql = "update  numsource " + where;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {

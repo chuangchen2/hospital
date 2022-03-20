@@ -28,7 +28,7 @@ public class AdminDao {
     }
 
     public boolean insertAdmin(Admin admin) throws SQLException {
-        String sql="insert into admin valuse(?,?,?)";
+        String sql = "insert into admin valuse(?,?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, admin.getAccount());
@@ -44,12 +44,12 @@ public class AdminDao {
     }
 
 
-    public boolean updateAdmin(String where ,Object[] o) throws SQLException {
-        String sql="update admin "+where;
+    public boolean updateAdmin(String where, Object[] o) throws SQLException {
+        String sql = "update admin " + where;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
-            preparedStatement.setString(i, (String)o[i - 1]);
+            preparedStatement.setString(i, (String) o[i - 1]);
         }
         int i = preparedStatement.executeUpdate();
         DBUtil.release(connection, preparedStatement, null);
@@ -62,20 +62,20 @@ public class AdminDao {
 
     public List<Admin> getAdmin(String account) throws SQLException {
         List<Admin> admins = new ArrayList<>();
-        String sql="select * from admin where account=?";
+        String sql = "select * from admin where account=?";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, account);
         ResultSet resultSet = preparedStatement.executeQuery();
         try {
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 admins.add(new Admin(resultSet.getString(1),
                         resultSet.getString(2),
                         resultSet.getString(3)));
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, resultSet);
         }
         return admins;

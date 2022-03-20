@@ -24,6 +24,7 @@ public class ApplyDao {
         }
         return instance;
     }
+
     /*create table if not exists apply (aid int primary key auto_increment,
                         did int comment '医生id',
                         dname char(16),
@@ -35,7 +36,7 @@ public class ApplyDao {
                         foreign key(wid) references workday(wid),
                         foreign key(did) references doctor(did));;*/
     public boolean insert(Apply apply) throws SQLException {
-        String sql="insert into apply values(null,?,?,?,?,now(),?,'等待处理')";
+        String sql = "insert into apply values(null,?,?,?,?,now(),?,'等待处理')";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, apply.getDid());
@@ -51,8 +52,9 @@ public class ApplyDao {
             return false;
         }
     }
+
     public ArrayList<HashMap<String, String>> query(String where, Object[] o) throws SQLException {
-        String sql="select request, workday.worktime,ampm, aid,dname,reason,apply.state,applytime from workday,apply "+where;
+        String sql = "select request, workday.worktime,ampm, aid,dname,reason,apply.state,applytime from workday,apply " + where;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
@@ -63,23 +65,23 @@ public class ApplyDao {
         try {
             ResultSetMetaData rsmd = resultSet.getMetaData();
             int columnCount = rsmd.getColumnCount();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 HashMap<String, String> hashMap = new HashMap<>();
-                for(int i=1; i<= columnCount; i++){
+                for (int i = 1; i <= columnCount; i++) {
                     hashMap.put(rsmd.getColumnLabel(i), resultSet.getString(i));
                 }
                 list.add(hashMap);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, resultSet);
         }
         return list;
     }
 
     public boolean update(String set, Object[] o) throws SQLException {
-        String sql="update apply "+set;
+        String sql = "update apply " + set;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
@@ -93,9 +95,10 @@ public class ApplyDao {
             return false;
         }
     }
+
     public void agree(Object[] o) throws SQLException {
         //TODO 取出事务
-        String sql="call agreeApply(?,?)";
+        String sql = "call agreeApply(?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setObject(1, o[0]);

@@ -1,22 +1,22 @@
 package bean;
 
-public class Doctor{
-   /* create table if not exists doctor (did int primary key auto_increment,
-                        account char(16) ,
-                        password char(16),
-                        dname char(16),
-                        fee int comment '医生出诊费',
-                        gender char(2),
-                        age tinyint,
-                        office char(16),
-                        room char(16),
-                        career char(8),
-                        description varchar(255),
-                        picpath varchar(64));*/
-   private String did;
-   private String account;
-   private String password;
-   private String dname;
+public class Doctor {
+    /* create table if not exists doctor (did int primary key auto_increment,
+                         account char(16) ,
+                         password char(16),
+                         dname char(16),
+                         fee int comment '医生出诊费',
+                         gender char(2),
+                         age tinyint,
+                         office char(16),
+                         room char(16),
+                         career char(8),
+                         description varchar(255),
+                         picpath varchar(64));*/
+    private String did;
+    private String account;
+    private String password;
+    private String dname;
     private String fee;
     private String gender;
     private String age;

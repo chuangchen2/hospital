@@ -28,10 +28,10 @@ public class OfficeDao {
     }
 
     public boolean insert(Office office) throws SQLException {
-        Object[] o=new Object[]{office.getOfficename(),
+        Object[] o = new Object[]{office.getOfficename(),
                 office.getDescription(),
                 office.getDoctornum()};
-        String sql="insert into office values(?,?,?)";
+        String sql = "insert into office values(?,?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, office.getOfficename());
@@ -46,29 +46,29 @@ public class OfficeDao {
         }
     }
 
-    public List<Office> query(String clounm, String where,String limit) throws SQLException {
-        List<Office> offices=new ArrayList<>();
-        String sql="select * from office where "+clounm+" like ? order by doctornum desc "+limit;
+    public List<Office> query(String clounm, String where, String limit) throws SQLException {
+        List<Office> offices = new ArrayList<>();
+        String sql = "select * from office where " + clounm + " like ? order by doctornum desc " + limit;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, "%" + where + "%");
         ResultSet rs = preparedStatement.executeQuery();
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 offices.add(new Office(rs.getString(1),
                         rs.getString(2),
                         rs.getInt(3)));
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, rs);
         }
         return offices;
     }
 
     public int getOfficeCount(String clounm, String where) throws SQLException {
-        String sql="select count(*) from office where "+clounm+" like ? ";
+        String sql = "select count(*) from office where " + clounm + " like ? ";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, "%" + where + "%");
@@ -80,7 +80,7 @@ public class OfficeDao {
             count = Integer.parseInt(string);
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, rs);
         }
         return count;

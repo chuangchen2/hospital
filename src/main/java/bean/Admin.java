@@ -8,7 +8,7 @@ public class Admin {
     public Admin() {
     }
 
-    public Admin(String account, String password,String name) {
+    public Admin(String account, String password, String name) {
         this.account = account;
         this.name = name;
         this.password = password;

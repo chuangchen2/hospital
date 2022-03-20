@@ -19,31 +19,31 @@ import java.util.List;
 public class QueryDoctor extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String column=req.getParameter("column");
-        String where=req.getParameter("where");
-        String pages=req.getParameter("pages");
-        DoctorDao doctorDao=DoctorDao.getInstance();
+        String column = req.getParameter("column");
+        String where = req.getParameter("where");
+        String pages = req.getParameter("pages");
+        DoctorDao doctorDao = DoctorDao.getInstance();
         List<Doctor> doctors = null;
         try {
-            doctors = doctorDao.query("where "+column+" like ?", new Object[]{"%"+where+"%"});
+            doctors = doctorDao.query("where " + column + " like ?", new Object[]{"%" + where + "%"});
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        JSONArray array=new JSONArray();
-        for(Doctor o:doctors){
-            JSONObject jsonObject=new JSONObject();
-            jsonObject.put("gender",o.getGender());
-            jsonObject.put("name",o.getDname());
-            jsonObject.put("account",o.getAccount());
-            jsonObject.put("fee",o.getFee());
-            jsonObject.put("age",o.getAge());
-            jsonObject.put("office",o.getOffice());
-            jsonObject.put("room",o.getRoom());
-            jsonObject.put("gender",o.getGender());
-            jsonObject.put("career",o.getCareer());
-            jsonObject.put("description",o.getDescription());
-            jsonObject.put("picPath",o.getPicpath());
+        JSONArray array = new JSONArray();
+        for (Doctor o : doctors) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("gender", o.getGender());
+            jsonObject.put("name", o.getDname());
+            jsonObject.put("account", o.getAccount());
+            jsonObject.put("fee", o.getFee());
+            jsonObject.put("age", o.getAge());
+            jsonObject.put("office", o.getOffice());
+            jsonObject.put("room", o.getRoom());
+            jsonObject.put("gender", o.getGender());
+            jsonObject.put("career", o.getCareer());
+            jsonObject.put("description", o.getDescription());
+            jsonObject.put("picPath", o.getPicpath());
             array.put(jsonObject);
         }
         resp.setContentType("application/json; charset=utf-8");

@@ -19,7 +19,7 @@ public class Apply {
     private String state;
     private String request;
 
-    public Apply(String aid, String did, String dname, String wid, String reason, String applyTime, String state,String request) {
+    public Apply(String aid, String did, String dname, String wid, String reason, String applyTime, String state, String request) {
         this.aid = aid;
         this.did = did;
         this.dname = dname;

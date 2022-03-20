@@ -28,9 +28,9 @@ public class QueryNumSource extends HttpServlet {
         String wid = req.getParameter("wid");
         String ampm = req.getParameter("ampm");
         String date = req.getParameter("date");
-        if(wid!=null){
-            String where="where wid=?";
-            WorkDayDao workDayDao=WorkDayDao.getInstance();
+        if (wid != null) {
+            String where = "where wid=?";
+            WorkDayDao workDayDao = WorkDayDao.getInstance();
             List<WorkDay> workDays = null;
             try {
                 workDays = workDayDao.query(where, new Object[]{wid});
@@ -40,15 +40,15 @@ public class QueryNumSource extends HttpServlet {
             WorkDay workDay = workDays.get(0);
 
             int nsnum = Integer.valueOf(workDay.getNsnum());
-            int size=240/nsnum;
-            Calendar calendar=Calendar.getInstance();
-            calendar.set(Calendar.MINUTE,30);
+            int size = 240 / nsnum;
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.MINUTE, 30);
             /*上午8.30-12.30 4*60=240
             下午1.30-5.30 4*/
-            if("上午".equals(ampm)){
-                calendar.set(Calendar.HOUR_OF_DAY,8);
-            }else {
-                calendar.set(Calendar.HOUR_OF_DAY,13);
+            if ("上午".equals(ampm)) {
+                calendar.set(Calendar.HOUR_OF_DAY, 8);
+            } else {
+                calendar.set(Calendar.HOUR_OF_DAY, 13);
             }
 //            if(Integer.valueOf(workDay.getWorktime())+1==calendar.get(Calendar.DAY_OF_WEEK)){
 //                System.out.println("今天");
@@ -57,8 +57,8 @@ public class QueryNumSource extends HttpServlet {
 //                }
 //            }
 
-            where=" where wid=? and visitdate=? and visitnoon=? and state='成功' order by serialnumber asc";
-            RecodeDao recodeDao=RecodeDao.getInstance();
+            where = " where wid=? and visitdate=? and visitnoon=? and state='成功' order by serialnumber asc";
+            RecodeDao recodeDao = RecodeDao.getInstance();
             List<Recode> recodes = null;
             try {
                 recodes = recodeDao.query(where, new Object[]{wid, date, ampm});
@@ -66,25 +66,26 @@ public class QueryNumSource extends HttpServlet {
                 e.printStackTrace();
             }
             List<NumSource> list = new ArrayList<>();
-            for (int i=1,j=0;i<=nsnum;i++){
-                String time=calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE);
+            for (int i = 1, j = 0; i <= nsnum; i++) {
+                String time = calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
                 NumSource numSource = new NumSource(i + "", date, ampm, time, "可预约");
-                if(j<recodes.size()){
-                    if(recodes.get(j).getSerialnumber().equals(i+"")){
-                        numSource.setState("已被预约");j++;
+                if (j < recodes.size()) {
+                    if (recodes.get(j).getSerialnumber().equals(i + "")) {
+                        numSource.setState("已被预约");
+                        j++;
                     }
                 }
-                calendar.add(Calendar.MINUTE,size);
+                calendar.add(Calendar.MINUTE, size);
                 list.add(numSource);
             }
-            JSONArray array=new JSONArray();
-            for(NumSource o:list){
-                JSONObject jsonObject=new JSONObject();
-                jsonObject.put("date",o.getVisitdate());
-                jsonObject.put("ampm",o.getVisitnoon());
-                jsonObject.put("serialnumber",o.getSerialnumber());
-                jsonObject.put("state",o.getState());
-                jsonObject.put("time",o.getVisittime());
+            JSONArray array = new JSONArray();
+            for (NumSource o : list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("date", o.getVisitdate());
+                jsonObject.put("ampm", o.getVisitnoon());
+                jsonObject.put("serialnumber", o.getSerialnumber());
+                jsonObject.put("state", o.getState());
+                jsonObject.put("time", o.getVisittime());
                 array.put(jsonObject);
             }
             resp.setContentType("application/json; charset=utf-8");

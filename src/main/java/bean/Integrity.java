@@ -17,6 +17,16 @@ public class Integrity {
     private String reason;
     private String score;
 
+    public Integrity(String id, String pid, String dname, String office, String time, String reason, String score) {
+        this.id = id;
+        this.pid = pid;
+        this.dname = dname;
+        this.office = office;
+        this.time = time;
+        this.reason = reason;
+        this.score = score;
+    }
+
     public String getId() {
         return id;
     }
@@ -70,16 +80,6 @@ public class Integrity {
     }
 
     public void setScore(String score) {
-        this.score = score;
-    }
-
-    public Integrity(String id, String pid, String dname, String office, String time, String reason, String score) {
-        this.id = id;
-        this.pid = pid;
-        this.dname = dname;
-        this.office = office;
-        this.time = time;
-        this.reason = reason;
         this.score = score;
     }
 }

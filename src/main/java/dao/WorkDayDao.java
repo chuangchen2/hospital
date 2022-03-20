@@ -124,20 +124,20 @@ public class WorkDayDao {
         return workDays;
     }*/
 
-   public boolean update(String set, Object[] o) throws SQLException {
-        String sql="update workday "+set;
-       Connection connection = DBUtil.getConnection();
-       PreparedStatement preparedStatement = connection.prepareStatement(sql);
-       for (int i = 1; i <= o.length; i++) {
-           preparedStatement.setObject(i, o[i]);
-       }
-       int i = preparedStatement.executeUpdate();
-       DBUtil.release(connection, preparedStatement, null);
-       if (i > 0) {
-           return true;
-       } else {
-           return false;
-       }
-   }
+    public boolean update(String set, Object[] o) throws SQLException {
+        String sql = "update workday " + set;
+        Connection connection = DBUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 1; i <= o.length; i++) {
+            preparedStatement.setObject(i, o[i]);
+        }
+        int i = preparedStatement.executeUpdate();
+        DBUtil.release(connection, preparedStatement, null);
+        if (i > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }

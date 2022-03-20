@@ -26,7 +26,7 @@ public class PatientDao {
     }
 
     public boolean update(String set, Object[] o) throws SQLException {
-        String sql="update patient "+set;
+        String sql = "update patient " + set;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
@@ -42,7 +42,7 @@ public class PatientDao {
     }
 
     public boolean insert(Patient patient) throws SQLException {
-        String sql="insert into patient values(null,?,?,?,?,?)";
+        String sql = "insert into patient values(null,?,?,?,?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, patient.getEmail());
@@ -60,13 +60,13 @@ public class PatientDao {
 
     public List<Patient> query(String clounm, String where) throws SQLException {
         List<Patient> lists = new ArrayList<>();
-        String sql="select * from patient where "+clounm+"=?";
+        String sql = "select * from patient where " + clounm + "=?";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, where);
         ResultSet rs = preparedStatement.executeQuery();
         try {
-            while (rs.next()){
+            while (rs.next()) {
                 lists.add(new Patient(rs.getString(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -76,7 +76,7 @@ public class PatientDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, rs);
         }
         return lists;
@@ -87,7 +87,7 @@ public class PatientDao {
                 visitdate  date comment '就诊日期',
                 visitnoon  char(4) comment '就诊上午或下午',
                 visittime  time comment '就诊时间',*/
-        String sql="select patient.pid, patient.name as pname,recode.ordertime,recode.state, recode.rid,recode.serialnumber,recode.visitdate,recode.visitnoon,recode.visittime " +
+        String sql = "select patient.pid, patient.name as pname,recode.ordertime,recode.state, recode.rid,recode.serialnumber,recode.visitdate,recode.visitnoon,recode.visittime " +
                 "from recode,patient where " +
                 "recode.did=? and recode.pid=patient.pid " +
                 "order by ordertime desc";
@@ -99,16 +99,16 @@ public class PatientDao {
         try {
             ResultSetMetaData rsmd = resultSet.getMetaData();
             int columnCount = rsmd.getColumnCount();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 HashMap<String, String> hashMap = new HashMap<>();
-                for(int i=1; i<= columnCount; i++){
+                for (int i = 1; i <= columnCount; i++) {
                     hashMap.put(rsmd.getColumnLabel(i), resultSet.getString(i));
                 }
                 list.add(hashMap);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, resultSet);
         }
         return list;

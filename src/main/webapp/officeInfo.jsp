@@ -46,10 +46,10 @@
         </div>
 
         <div class="office-info">
-            <h3 class="office-name">
+            <h1 class="office-name">
                 ${office.officename}
-            </h3>
-            <h2>科室简介</h2>
+            </h1>
+            <h3>科室简介</h3>
             <div>
                 ${office.description}
             </div>

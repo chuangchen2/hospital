@@ -24,11 +24,11 @@ import java.util.List;
 
 @WebServlet("/order")
 public class Order extends HttpServlet {
+    Patient patient;
     private HttpServletRequest req;
     private HttpServletResponse resp;
     private RecodeDao recodeDao = RecodeDao.getInstance();
     private NumSourceDao numSourceDao = NumSourceDao.getInstance();
-    Patient patient;
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -56,7 +56,7 @@ public class Order extends HttpServlet {
             case "order"://准备预约
                 NumSource numSource = new NumSource(strings[0], strings[1], strings[2], strings[3], wid);
                 //HashMap<String, String> hashMap = recodeDao.confirm(id);
-                DoctorDao doctorDao=DoctorDao.getInstance();
+                DoctorDao doctorDao = DoctorDao.getInstance();
                 List<Doctor> doctors = null;
                 try {
                     doctors = doctorDao.query(" where did=?", new Object[]{did});
@@ -68,10 +68,10 @@ public class Order extends HttpServlet {
                 req.getRequestDispatcher("confirmOrder.jsp").forward(req, resp);
                 break;
             case "confirm"://完成预约
-                if(Integer.valueOf(patient.getIntegrity())<=70){
+                if (Integer.valueOf(patient.getIntegrity()) <= 70) {
                     req.getSession().setAttribute("message", "预约失败，你的诚信度低于70分！");
                     req.getRequestDispatcher("orderList").forward(req, resp);
-                }else {
+                } else {
                     try {
                         confirm(did);
                     } catch (SQLException e) {
@@ -80,10 +80,10 @@ public class Order extends HttpServlet {
                 }
                 break;
             case "alter"://修改预约
-                String set =" set serialnumber=? , visittime=? , ordertime=now() where rid=?";
+                String set = " set serialnumber=? , visittime=? , ordertime=now() where rid=?";
 
                 try {
-                    System.out.println(recodeDao.update(set,new Object[]{strings[0],strings[3],rid}));
+                    System.out.println(recodeDao.update(set, new Object[]{strings[0], strings[3], rid}));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -94,9 +94,9 @@ public class Order extends HttpServlet {
                 req.getRequestDispatcher("orderList").forward(req, resp);
                 break;
             case "cancel":
-                String set1 =" set state='取消' where rid=?";
+                String set1 = " set state='取消' where rid=?";
                 try {
-                    recodeDao.update(set1,new Object[]{rid});
+                    recodeDao.update(set1, new Object[]{rid});
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -116,12 +116,12 @@ public class Order extends HttpServlet {
         NumSource numSource = (NumSource) req.getSession().getAttribute("numSource");
         String where = "where wid=? and visitdate=? and visitnoon=? and visittime=? and state='成功'";
         RecodeDao recodeDao = RecodeDao.getInstance();
-        List<Recode> list = recodeDao.query(where, new Object[]{numSource.getState(),numSource.getVisitdate(),numSource.getVisitnoon(),numSource.getVisittime()});
+        List<Recode> list = recodeDao.query(where, new Object[]{numSource.getState(), numSource.getVisitdate(), numSource.getVisitnoon(), numSource.getVisittime()});
         //String did = Util.nullToString(req.getParameter("did"));//医生id
 
         if (list.size() == 0) {
             //new Recode("",patient.getId(),numSource.getState(),did,numSource)
-            if(numSourceDao.order(patient.getId(), did,numSource)){
+            if (numSourceDao.order(patient.getId(), did, numSource)) {
                 req.getSession().setAttribute("message", "预约成功！");
                 req.getRequestDispatcher("orderList").forward(req, resp);
             } else {

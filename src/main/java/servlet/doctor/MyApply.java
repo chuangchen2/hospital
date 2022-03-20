@@ -22,20 +22,20 @@ import java.util.List;
 public class MyApply extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String  action = req.getParameter("action") ;
-        String  aid = req.getParameter("aid") ;
-        ApplyDao applyDao=ApplyDao.getInstance();
-        if("cancel".equals(action)){
-            String set="set state='取消' where aid=?";
+        String action = req.getParameter("action");
+        String aid = req.getParameter("aid");
+        ApplyDao applyDao = ApplyDao.getInstance();
+        if ("cancel".equals(action)) {
+            String set = "set state='取消' where aid=?";
             try {
-                applyDao.update(set,new Object[]{aid});
+                applyDao.update(set, new Object[]{aid});
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         Doctor doctor = (Doctor) req.getSession().getAttribute("doctor");
 
-        String where=" where apply.wid=workday.wid and apply.did=? order by applytime desc";
+        String where = " where apply.wid=workday.wid and apply.did=? order by applytime desc";
         ArrayList<HashMap<String, String>> maps = null;
         try {
             maps = applyDao.query(where, new Object[]{doctor.getDid()});
@@ -43,7 +43,7 @@ public class MyApply extends HttpServlet {
             e.printStackTrace();
         }
 
-        req.setAttribute("maps",maps);
-        req.getRequestDispatcher("myApply.jsp").forward(req,resp);
+        req.setAttribute("maps", maps);
+        req.getRequestDispatcher("myApply.jsp").forward(req, resp);
     }
 }

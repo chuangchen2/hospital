@@ -75,10 +75,10 @@ public class ScheduleManage extends HttpServlet {
             }
             req.setAttribute("message", message);*/
         }
-        where =" where did=? order by worktime asc";
+        where = " where did=? order by worktime asc";
         List<WorkDay> workDays = null;
         try {
-            workDays = workDayDao.query(where,new Object[]{did});
+            workDays = workDayDao.query(where, new Object[]{did});
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -11,19 +11,16 @@ public class Pages {
     private int totalPage;// 总页数;
 
 
-    private int showPageCount=10;// 显示页码个数，默认是10
+    private int showPageCount = 10;// 显示页码个数，默认是10
+
     public Pages() {
 
     }
 
-    public Pages(int currentPage, int totalRecord,int pageRecord) {
+    public Pages(int currentPage, int totalRecord, int pageRecord) {
         this.totalRecord = totalRecord;
         this.currentPage = currentPage;
         this.pageRecord = pageRecord;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
     }
 
     public int getPageRecord() {
@@ -44,7 +41,7 @@ public class Pages {
      * @return
      */
     public int getTotalPage() {
-        this.totalPage=this.totalRecord % this.pageRecord == 0 ? this.totalRecord / this.pageRecord
+        this.totalPage = this.totalRecord % this.pageRecord == 0 ? this.totalRecord / this.pageRecord
                 : this.totalRecord / this.pageRecord + 1;
         return this.totalPage;
     }
@@ -61,10 +58,14 @@ public class Pages {
             this.currentPage = getTotalPage();
         }
         if (currentPage < 1) {
-                this.currentPage = 1;
+            this.currentPage = 1;
         }
 
         return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 
     /**

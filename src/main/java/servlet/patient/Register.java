@@ -20,52 +20,52 @@ public class Register extends HttpServlet {
         password char(32),
                 gender char(2),
                 name char(16),*/
-        String message="";
+        String message = "";
         String checkCode = req.getParameter("checkCode");
         String checkCode1 = (String) req.getSession().getAttribute("checkCode");
-        if(checkCode.equals("123456")||(checkCode!=null&&checkCode1!=null&&checkCode.equals(checkCode1))){
+        if (checkCode.equals("123456") || (checkCode != null && checkCode1 != null && checkCode.equals(checkCode1))) {
             String password = req.getParameter("password");
             String passwordCof = req.getParameter("passwordCof");
-            if(password!=null&&password.equals(passwordCof)){
-                String account=req.getParameter("account");
-                if(account!=null){
-                    PatientDao patientDao=PatientDao.getInstance();
+            if (password != null && password.equals(passwordCof)) {
+                String account = req.getParameter("account");
+                if (account != null) {
+                    PatientDao patientDao = PatientDao.getInstance();
                     List<Patient> patients = null;
                     try {
                         patients = patientDao.query("account", account);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    if(patients.size()==0){
+                    if (patients.size() == 0) {
                         String name = req.getParameter("name");
                         String email = req.getParameter("email");
-                        Patient patient=new Patient(null,account,email,password,name,"100");
+                        Patient patient = new Patient(null, account, email, password, name, "100");
                         try {
-                            if(patientDao.insert(patient)){
-                                message="注册成功，请登录！";
-                                req.getSession().setAttribute("message",message);
+                            if (patientDao.insert(patient)) {
+                                message = "注册成功，请登录！";
+                                req.getSession().setAttribute("message", message);
                                 req.getSession().removeAttribute("checkCode");
                                 resp.sendRedirect("login.jsp");
                                 return;
-                            }else {
-                                message="注册失败，请稍后再试！";
+                            } else {
+                                message = "注册失败，请稍后再试！";
                             }
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
-                    }else {
-                        message="该账号已存在！";
+                    } else {
+                        message = "该账号已存在！";
                     }
-                }else {
-                    message="请输入账号！";
+                } else {
+                    message = "请输入账号！";
                 }
-            }else {
-                message="两次密码不正确！";
+            } else {
+                message = "两次密码不正确！";
             }
-        }else {
-            message="验证码不正确！";
+        } else {
+            message = "验证码不正确！";
         }
-        req.setAttribute("message",message);
-        req.getRequestDispatcher("register.jsp").forward(req,resp);
+        req.setAttribute("message", message);
+        req.getRequestDispatcher("register.jsp").forward(req, resp);
     }
 }

@@ -1,6 +1,8 @@
 package dao;
 
 import bean.Doctor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.DBUtil;
 
 import java.sql.Connection;
@@ -12,6 +14,7 @@ import java.util.List;
 
 public class DoctorDao {
     private static DoctorDao instance = null;
+    private final static Logger logger = LogManager.getLogger(DoctorDao.class);
 
     private DoctorDao() {
     }
@@ -28,7 +31,7 @@ public class DoctorDao {
     }
 
     public boolean insert(Doctor doctor) throws SQLException {
-        String sql="insert into doctor values(null,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "insert into doctor values(null,?,?,?,?,?,?,?,?,?,?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, doctor.getAccount());
@@ -62,8 +65,8 @@ public class DoctorDao {
     }
 
     public List<Doctor> query(String where, Object[] o) throws SQLException {
-        List<Doctor> doctors=new ArrayList<>();
-        String sql="select * from doctor "+where;
+        List<Doctor> doctors = new ArrayList<>();
+        String sql = "select * from doctor " + where;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
@@ -71,7 +74,7 @@ public class DoctorDao {
         }
         ResultSet resultSet = preparedStatement.executeQuery();
         try {
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 doctors.add(new Doctor(resultSet.getString(1),
                         resultSet.getString(2),
                         resultSet.getString(3),
@@ -87,15 +90,16 @@ public class DoctorDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DBUtil.release(connection, preparedStatement, resultSet);
         }
         return doctors;
     }
 
     public int getDoctorCount(String where, Object[] o) throws SQLException {
-        String sql="select count(*) from doctor "+where;
+        String sql = "select count(*) from doctor " + where;
         Connection connection = DBUtil.getConnection();
+        logger.debug(sql);
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
             preparedStatement.setObject(i, o[i - 1]);
@@ -110,7 +114,7 @@ public class DoctorDao {
     }
 
     public boolean update(String set, Object[] o) throws SQLException {
-        String sql="update doctor "+set;
+        String sql = "update doctor " + set;
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 1; i <= o.length; i++) {
