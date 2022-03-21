@@ -176,15 +176,6 @@
             </div>
 
             <div class="form-group col-xs-12">
-                <input id="sendcode" type="button" class="btn " value="发送验证码">
-            </div>
-            <div class="form-group col-xs-12">
-                <label class="sr-only" for="userEmail">code</label>验证码(*):<input
-                    style="font-weight: bold" type="text" name="checkCode"
-                    id="code" class="form-control input-control clearfix"
-                    required onkeyup="isCheckEmail()" /><span id=""></span>
-            </div>
-            <div class="form-group col-xs-12">
                 <button type="submit" class="btn" id="btn">立即注册</button>
             </div>
         </form>
@@ -193,37 +184,6 @@
     </div>
 
     <script>
-        $(function () {
-            $("#sendcode").bind("click",function () {
-                if(isCheckEmail()){
-                    $("#sendcode").attr("disabled",true);
-                    sendEmail($("#userEmail").val());
-                    var time=60;
-                    var timer=setInterval(function () {
-                        $("#sendcode").val("重新发送（"+time+"s）");
-                        time--;
-                        if(time<0){
-                            time=60;
-                            $("#sendcode").attr("disabled",false);
-                            $("#sendcode").val("发送验证码");
-                            clearInterval(timer);
-                        }
-                    },1000);
-                }
-            });
-            function sendEmail(email) {
-                $.post("<%=request.getContextPath()%>/sendmail",
-                    {
-                        action:"checkCode",
-                        email:email
-                    },
-                    function(data){
-                        console.log(data);
-
-                    });
-            }
-        });
-
         function isCheckEmail() {
             var email = document.getElementById("userEmail").value;
             document.getElementById("errorTip").innerHTML = "";

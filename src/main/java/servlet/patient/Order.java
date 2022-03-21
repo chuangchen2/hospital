@@ -27,8 +27,8 @@ public class Order extends HttpServlet {
     Patient patient;
     private HttpServletRequest req;
     private HttpServletResponse resp;
-    private RecodeDao recodeDao = RecodeDao.getInstance();
-    private NumSourceDao numSourceDao = NumSourceDao.getInstance();
+    private final RecodeDao recodeDao = RecodeDao.getInstance();
+    private final NumSourceDao numSourceDao = NumSourceDao.getInstance();
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,20 +39,10 @@ public class Order extends HttpServlet {
         String wid = req.getParameter("wid");//工作日id
         String did = req.getParameter("did");//工作日id
         String action = req.getParameter("action");
-        String checkcode = Util.nullToString(req.getParameter("checkcode"));
         String rid = req.getParameter("rid");//记录的id
         String data = Util.nullToString(req.getParameter("data"));//就诊序号
         String[] strings = data.split(",");
         switch (action) {
-            case "checkcode"://预约验证码
-                String codeConfirm = (String) req.getSession().getAttribute("codeConfirm");
-                //resp.setContentType("application/json; charset=utf-8");
-                if (checkcode.equals("123456") || checkcode.equals(codeConfirm)) {
-                    resp.getWriter().write("true");
-                } else {
-                    resp.getWriter().write("false");
-                }
-                break;
             case "order"://准备预约
                 NumSource numSource = new NumSource(strings[0], strings[1], strings[2], strings[3], wid);
                 //HashMap<String, String> hashMap = recodeDao.confirm(id);
@@ -133,33 +123,4 @@ public class Order extends HttpServlet {
             req.getRequestDispatcher("showWeek?did=" + did).forward(req, resp);
         }
     }
-
-//    private void cancel(String rid) {
-//        /*String sql="update recode  set state='取消' where id="+rid;
-//        recodeDao.update(set,new Object[]{rid});
-//        sql="update  numcource  set state ='可预约' where id="+id;
-//        numSourceDao.update(set,new Object[]{id});
-//        sql="update workday set orderednum=orderednum-1 where id=(select workdayid from numsource where id='"+id+"')";*/
-//        Connection conn = DBUtil.createConn();
-//        Statement statement = null;
-//        String sql = "update recode  set state='取消' where id=" + rid;
-//        try {
-//            statement = conn.createStatement();
-//            statement.addBatch(sql);
-//            sql = "update  numsource  set state ='可预约' where id=(select nid from recode where id='" + rid + "')";
-//            statement.addBatch(sql);
-//            sql = "update workday set orderednum=orderednum-1 where id=(select workdayid from numsource where id=(select nid from recode where id='" + rid + "'))";
-//            statement.addBatch(sql);
-//            statement.executeBatch();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                statement.close();
-//                conn.close();
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 }

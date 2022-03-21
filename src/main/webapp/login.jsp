@@ -167,37 +167,6 @@
     </div>
 
     <script>
-        $(function () {
-            $("#sendcode").bind("click",function () {
-                if(isCheckEmail()){
-                    $("#sendcode").attr("disabled",true);
-                    sendEmail($("#userEmail").val());
-                    var time=60;
-                    var timer=setInterval(function () {
-                        $("#sendcode").val("重新发送（"+time+"s）");
-                        time--;
-                        if(time<0){
-                            time=60;
-                            $("#sendcode").attr("disabled",false);
-                            $("#sendcode").val("发送验证码");
-                            clearInterval(timer);
-                        }
-                    },1000);
-                }
-            });
-            function sendEmail(email) {
-                $.post("<%=request.getContextPath()%>/sendmail",
-                    {
-                        action:"checkCode",
-                        email:email
-                    },
-                    function(data){
-                        console.log(data);
-
-                    });
-            }
-        });
-
         function isCheckEmail() {
             var email = document.getElementById("userEmail").value;
             document.getElementById("errorTip").innerHTML = "";

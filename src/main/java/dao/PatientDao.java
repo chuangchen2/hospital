@@ -34,11 +34,7 @@ public class PatientDao {
         }
         int i = preparedStatement.executeUpdate();
         DBUtil.release(connection, preparedStatement, null);
-        if (i > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return i > 0;
     }
 
     public boolean insert(Patient patient) throws SQLException {
@@ -49,13 +45,10 @@ public class PatientDao {
         preparedStatement.setString(2, patient.getPassword());
         preparedStatement.setString(3, patient.getName());
         preparedStatement.setString(4, patient.getIntegrity());
+        preparedStatement.setString(5, "100");
         int i = preparedStatement.executeUpdate();
         DBUtil.release(connection, preparedStatement, null);
-        if (i > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return i > 0;
     }
 
     public List<Patient> query(String clounm, String where) throws SQLException {

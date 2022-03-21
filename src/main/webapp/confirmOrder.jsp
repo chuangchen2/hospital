@@ -31,8 +31,6 @@
                             <tr><td>预约科室：</td><td>${doctor.office}&nbsp;&nbsp;(${doctor.room})</td></tr>
                             <tr><td>就诊时间：</td><td>${numSource.visitdate} ${numSource.visitnoon} ${numSource.visittime}第${numSource.serialnumber}号</td></tr>
                             <tr><td>诊&nbsp;&nbsp;查&nbsp;&nbsp;费：</td><td>${doctor.fee}.00元</td></tr>
-                            <tr><td>你的邮箱：</td><td>${sessionScope.patient.email}<button class="send">发送验证码</button></td></tr>
-                            <tr><td>验&nbsp;&nbsp;证&nbsp;&nbsp;码：</td><td><input  id="checkcode" name="checkcode"></td></tr>
                             <tr><td colspan="2"  class="confirm">确定</td></tr>
                         </table>
 
@@ -40,46 +38,8 @@
                     <script>
                         $(function () {
                             $(".confirm").bind("click",function () {
-                                //$("form").submit();
-                                $.post("<%=request.getContextPath()%>/order",
-                                    {
-                                        action:"checkcode",
-                                        checkcode:$("#checkcode").val()
-                                    },
-                                    function(data){
-                                        if(data=="true"){
-                                            $("form").submit();
-                                        }else {
-                                            alert("验证码错误！")
-                                        }
-                                        console.log(data);
-                                    });
+                                $("form").submit();
                             });
-                            $(".send").bind("click",function () {
-                                    $(".send").attr("disabled",true);
-                                    sendEmail();
-                                var time=60;
-                                    var timer=setInterval(function () {
-
-                                        $(".send").text("重新发送（"+time+"s）");
-                                        time--;
-                                        if(time<0){
-                                            time=60;
-                                            $(".send").attr("disabled",false);
-                                            $(".send").text("发送验证码");
-                                            clearInterval(timer);
-                                        }
-                                    },1000);
-                            });
-                            function sendEmail() {
-                                $.post("<%=request.getContextPath()%>/sendmail",
-                                    {
-                                        action:"confirm"
-                                    },
-                                    function(data){
-                                        console.log(data);
-                                    });
-                            }
                         });
                     </script>
                 </div>

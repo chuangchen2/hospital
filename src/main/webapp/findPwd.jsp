@@ -168,16 +168,6 @@
                     name="passwordCof" class="form-password form-control "
                     id="pwd2" required onkeyup="isCheckPwd()" /> <span id="pwdTip"></span>
             </div>
-
-            <div class="form-group col-xs-12">
-                <input id="sendcode" type="button" class="btn " value="发送验证码">
-            </div>
-            <div class="form-group col-xs-12">
-                <label class="sr-only" for="userEmail">code</label>验证码(*):<input
-                    style="font-weight: bold" type="text" name="checkCode"
-                    id="code" class="form-control input-control clearfix"
-                    required onkeyup="isCheckEmail()" /><span id=""></span>
-            </div>
             <div class="form-group col-xs-12">
                 <button type="submit" class="btn" id="btn">重置密码</button>
             </div>
@@ -187,38 +177,6 @@
     </div>
 
     <script>
-        $(function () {
-            $("#sendcode").bind("click",function () {
-                if(isCheckEmail()){
-                    $("#sendcode").attr("disabled",true);
-                    sendEmail($("#userEmail").val());
-                    var time=60;
-                    var timer=setInterval(function () {
-                        $("#sendcode").val("重新发送（"+time+"s）");
-                        time--;
-                        if(time<0){
-                            time=60;
-                            $("#sendcode").attr("disabled",false);
-                            $("#sendcode").val("发送验证码");
-                            clearInterval(timer);
-                        }
-                    },1000);
-                }else {$('#errorTip').text("邮箱错误！");}
-            });
-            function sendEmail(email) {
-                $.post("<%=request.getContextPath()%>/findPwd",
-                    {
-                        action:"sendCode",
-                        account:$("#account").val(),
-                        email:$("#userEmail").val()
-                    },
-                    function(data){
-                        console.log(data);
-                        $('#errorTip').text (data);
-                    });
-            }
-        });
-
         function isCheckEmail() {
             var email = document.getElementById("userEmail").value;
             document.getElementById("errorTip").innerHTML = "";
