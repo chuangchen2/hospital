@@ -1,5 +1,8 @@
 package filter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +15,7 @@ import java.util.List;
 @WebFilter("/*")
 public class LoginFilter implements Filter {
     private List<String> patient;
+    public static final Logger logger = LogManager.getLogger();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -27,6 +31,7 @@ public class LoginFilter implements Filter {
         String uri = req.getRequestURI().substring(req.getContextPath().length());//请求的页面
         String url = req.getHeader("referer");//之前的页面
         if (req.getSession().getAttribute("patient") == null && patient.contains(uri)) {
+            logger.info("未登录拦截");
             req.getSession().setAttribute("message", "请先登录!");
             req.getSession().setAttribute("url", url);
 //            System.out.println(req.getSession().getAttribute("url"));
