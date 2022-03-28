@@ -41,11 +41,11 @@ public class PatientDao {
         String sql = "insert into patient values(null,?,?,?,?,?)";
         Connection connection = DBUtil.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setString(1, patient.getEmail());
-        preparedStatement.setString(2, patient.getPassword());
-        preparedStatement.setString(3, patient.getName());
-        preparedStatement.setString(4, patient.getIntegrity());
-        preparedStatement.setString(5, "100");
+        preparedStatement.setString(1, patient.getAccount());
+        preparedStatement.setString(2, patient.getEmail());
+        preparedStatement.setString(3, patient.getPassword());
+        preparedStatement.setString(4, patient.getName());
+        preparedStatement.setString(5, patient.getIntegrity());
         int i = preparedStatement.executeUpdate();
         DBUtil.release(connection, preparedStatement, null);
         return i > 0;

@@ -55,7 +55,7 @@ public class DoctorSearch extends HttpServlet {
         }
         req.setAttribute("office", offices.get(0));
         String order = req.getParameter("order");
-        if ("doctor".equals(order)) {
+        if ("all".equals(order)) {
             logger.info("查询所有医生第 " + pages.getCurrentPage() + " 页");
             req.getRequestDispatcher("/orderDoctor.jsp").forward(req, resp);
         } else {
